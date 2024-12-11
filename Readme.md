@@ -25,8 +25,8 @@ document and replace it with new text.
 Because while your fancy editor is still loading, I've already written half my document. Webpad is speed dating with productivity!
 
 # Team Members:
-Team Lead: Shrey Singh
-Team Members: Aditya Raj
+Team_Lead: Shrey Singh
+Team_Members: Aditya Raj
               Abhijit Das
               Anshman Singh
               Arjun
