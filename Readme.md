@@ -27,6 +27,6 @@ Because while your fancy editor is still loading, I've already written half my d
 # Team Members:
 Team_Lead: Shrey Singh,
 Team_Members: Aditya Raj,
-              Abhijit Das,
+              Abhijit,
               Anshman Singh,
               Arjun

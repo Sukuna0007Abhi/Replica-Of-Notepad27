@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login & Signup</title>
+  <link rel="stylesheet" href="LogNSign.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">
+      <img src="logo.png" alt="WebPad Logo" class="logo-icon">
+      <span class="logo-text">WebPad</span>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="form-container">
+    <h1 id="form-title">Login</h1>
+    <form id="form">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" required placeholder="Enter your email">
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" required placeholder="Enter your password">
+      </div>
+      <button type="submit" class="btn-primary" id="submit-btn">Login</button>
+      <p class="form-toggle">
+        Don't have an account? <a href="#" id="toggle-link">Sign up</a>
+      </p>
+    </form>
+    <p id="message" class="message"></p>
+  </div>
+
+  <script src="LogNSign.js"></script>
+</body>
+</html>
