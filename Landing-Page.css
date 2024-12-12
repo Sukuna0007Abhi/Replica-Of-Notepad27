@@ -47,7 +47,17 @@
   .nav-link {
     text-decoration: none;
     color: #333;
-    font-size: 1rem;
+    font-size: 1.05rem;
+    font-weight: bold;
+    padding: 0.5rem 1rem;
+  }
+
+  .nav-link1 {
+    text-decoration: none;
+    color: #333;
+    font-size: 1.05rem;
+    font-weight: bold;
+    padding: 0.5rem 1rem;
   }
   
   .nav-link:hover {
@@ -71,6 +81,10 @@
   }
   
   .btn-signup:hover {
+    background-color: #3752cc;
+  }
+
+  .btn-login:hover {
     background-color: #3752cc;
   }
   
