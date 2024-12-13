@@ -1,71 +1,92 @@
-// Form Elements
-const form = document.getElementById("form");
-const formTitle = document.getElementById("form-title");
-const emailInput = document.getElementById("email");
-const passwordInput = document.getElementById("password");
-const submitBtn = document.getElementById("submit-btn");
-const toggleLink = document.getElementById("toggle-link");
-const message = document.getElementById("message");
+// Get buttons and forms
+const btnSignup = document.getElementById('btn-signup');
+const btnLogin = document.getElementById('btn-login');
+const signupForm = document.getElementById('signup-form');
+const loginForm = document.getElementById('login-form');
 
-// State to track the current form (login/signup)
-let isLogin = true;
-
-// Toggle between login and signup forms
-toggleLink.addEventListener("click", (e) => {
-  e.preventDefault();
-  isLogin = !isLogin;
-
-  if (isLogin) {
-    formTitle.textContent = "Login";
-    submitBtn.textContent = "Login";
-    toggleLink.textContent = "Sign up";
-    message.textContent = "";
-  } else {
-    formTitle.textContent = "Sign Up";
-    submitBtn.textContent = "Sign Up";
-    toggleLink.textContent = "Login";
-    message.textContent = "";
-  }
+// Toggle between Sign Up and Log In forms
+btnSignup.addEventListener('click', () => {
+  btnSignup.classList.add('active');
+  btnLogin.classList.remove('active');
+  signupForm.classList.add('active');
+  loginForm.classList.remove('active');
 });
 
-// Handle form submission
-form.addEventListener("submit", (e) => {
-  e.preventDefault();
-  const email = emailInput.value.trim();
-  const password = passwordInput.value.trim();
+btnLogin.addEventListener('click', () => {
+  btnLogin.classList.add('active');
+  btnSignup.classList.remove('active');
+  loginForm.classList.add('active');
+  signupForm.classList.remove('active');
+});
 
-  if (!email || !password) {
-    message.textContent = "Please fill in all fields.";
+// Sign Up functionality
+function signUp(event) {
+  event.preventDefault(); // Prevent form submission
+
+  const name = document.getElementById('signup-name').value.trim();
+  const email = document.getElementById('signup-email').value.trim();
+  const password = document.getElementById('signup-password').value.trim();
+
+  // Validate inputs
+  if (!name || !email || !password) {
+    alert('Please fill in all fields.');
     return;
   }
 
-  if (isLogin) {
-    // Login logic
-    const storedUser = JSON.parse(localStorage.getItem(email));
-    if (storedUser && storedUser.password === password) {
-      message.style.color = "green";
-      message.textContent = "Login successful!";
-    } else {
-      message.style.color = "red";
-      message.textContent = "Invalid email or password.";
-    }
-  } else {
-    // Sign up logic
-    if (localStorage.getItem(email)) {
-      message.style.color = "red";
-      message.textContent = "User already exists.";
-    } else {
-      localStorage.setItem(email, JSON.stringify({ email, password }));
-      message.style.color = "green";
-      message.textContent = "Sign up successful! You can now log in.";
-      isLogin = true;
-      formTitle.textContent = "Login";
-      submitBtn.textContent = "Login";
-      toggleLink.textContent = "Sign up";
-    }
+  if (!validateEmail(email)) {
+    alert('Please enter a valid email address.');
+    return;
   }
 
-  // Clear form fields
-  emailInput.value = "";
-  passwordInput.value = "";
-});
+  // Save user data to local storage
+  const userExists = localStorage.getItem(email);
+  if (userExists) {
+    alert('An account with this email already exists. Please log in.');
+    btnLogin.click(); // Switch to the Log In form
+    return;
+  }
+
+  localStorage.setItem(email, JSON.stringify({ name, password }));
+  alert('Account created successfully! Please log in.');
+  btnLogin.click(); // Switch to the Log In form
+}
+
+// Log In functionality
+function logIn(event) {
+  event.preventDefault(); // Prevent form submission
+
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value.trim();
+
+  // Validate inputs
+  if (!email || !password) {
+    alert('Please fill in all fields.');
+    return;
+  }
+
+  const userData = localStorage.getItem(email);
+  if (!userData) {
+    alert('No account found with this email. Please sign up.');
+    btnSignup.click(); // Switch to the Sign Up form
+    return;
+  }
+
+  const { name, password: storedPassword } = JSON.parse(userData);
+  if (password !== storedPassword) {
+    alert('Incorrect password.');
+    return;
+  }
+
+  alert(`Welcome back, ${name}!`);
+  // Redirect or perform further actions for logged-in users
+  window.location.href = 'dashboard.html'; // Replace with the actual dashboard URL
+}
+
+// Helper function to validate email
+function validateEmail(email) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
+// Load the Sign Up form by default
+window.onload = () => btnSignup.click();
