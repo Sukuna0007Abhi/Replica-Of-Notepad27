@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notepad with Font Features</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    #toolbar {
+      margin-bottom: 10px;
+    }
+    #toolbar select, #toolbar input {
+      padding: 5px;
+      margin-right: 10px;
+    }
+    #editor {
+      width: 100%;
+      height: 300px;
+      font-size: 16px;
+      font-family: Arial, sans-serif;
+      color: black;
+      border: 1px solid #ccc;
+      padding: 10px;
+      resize: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Notepad</h1>
+
+  
+  <div id="toolbar">
+    <label for="font-family">Font: </label>
+    <select id="font-family">
+      <option value="Arial">Arial</option>
+      <option value="Verdana">Verdana</option>
+      <option value="Times New Roman">Times New Roman</option>
+      <option value="Courier New">Courier New</option>
+      <option value="Georgia">Georgia</option>
+    </select>
+
+    <label for="font-size">Size: </label>
+    <select id="font-size">
+      <option value="12px">12px</option>
+      <option value="14px" selected>14px</option>
+      <option value="16px">16px</option>
+      <option value="18px">18px</option>
+      <option value="24px">24px</option>
+    </select>
+
+    <label for="font-color">Color: </label>
+    <input type="color" id="font-color" value="#000000">
+
+    <label for="font-style">Style: </label>
+    <select id="font-style">
+      <option value="normal">Normal</option>
+      <option value="italic">Italic</option>
+      <option value="bold">Bold</option>
+      <option value="underline">Underline</option>
+    </select>
+  </div>
+
+  
+  <textarea id="editor" placeholder="Start typing..."></textarea>
+
+  <script src="font-feature.js"></script>
+</body>
+</html>
