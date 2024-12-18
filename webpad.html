@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="webpad.css">
+    <title>WebPad</title>
+</head>
+<body>
+    <!-- Navbar -->
+    <header class="header">
+        <div class="logo">
+            <img src="Images/logo.png" alt="WebPad Logo" class="logo-icon">
+            <span class="logo-text">WebPad</span>
+        </div>
+        <nav class="nav">
+            <a href="saved-docs.html" class="nav-link">Saved Docs</a>
+            <a href="index.html" class="nav-link">Log Out</a>
+        </nav>
+    </header>
+
+    <!-- Overlay for New or Edit Document Options -->
+    <div id="options-overlay" class="overlay">
+        <div class="overlay-content">
+            <h2>Select an Option</h2>
+            <button onclick="newDocument()" class="overlay-button">New Document</button>
+            <button onclick="navigateToSavedDocs()" class="overlay-button">Edit Existing Document</button>
+        </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div id="toolbar" class="toolbar hidden">
+        <select id="font-style" onchange="changeFontStyle(this.value)">
+            <option value="Arial" selected>Arial</option>
+            <option value="Verdana">Verdana</option>
+            <option value="Times New Roman">Times New Roman</option>
+        </select>
+        <select id="font-size" onchange="changeFontSize(this.value)">
+            <option value="1">Small</option>
+            <option value="3" selected>Normal</option>
+            <option value="5">Large</option>
+        </select>
+        <input type="color" id="font-color" onchange="changeFontColor(this.value)">
+        <button onclick="execCommand('bold')">Bold</button>
+        <button onclick="execCommand('italic')">Italic</button>
+        <button onclick="execCommand('underline')">Underline</button>
+        <button onclick="execCommand('strikeThrough')">Strike</button>
+        <button onclick="insertList('ul')">Bullet List</button>
+        <button onclick="insertList('ol')">Numbered List</button>
+        <button onclick="insertTable()">Insert Table</button>
+        <button onclick="showFindReplace()">Find & Replace</button>
+        <button onclick="undo()">Undo</button>
+        <button onclick="redo()">Redo</button>
+    </div>
+
+    <!-- Editor -->
+    <div id="editor-container" class="hidden">
+        <div id="editor" contenteditable="true"></div>
+    </div>
+
+    <!-- Find & Replace Modal -->
+    <div id="find-replace-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3>Find & Replace</h3>
+            <input type="text" id="find-input" placeholder="Find Text">
+            <input type="text" id="replace-input" placeholder="Replace With">
+            <button onclick="findAndReplace()" class="overlay-button">Replace All</button>
+            <button onclick="closeFindReplace()" class="overlay-button">Close</button>
+        </div>
+    </div>
+
+    <!-- Progress Saved Message -->
+    <div id="progress-message" class="hidden">Progress Saved</div>
+
+    <script src="webpad.js"></script>
+</body>
+</html>

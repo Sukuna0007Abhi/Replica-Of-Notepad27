@@ -79,7 +79,7 @@ function logIn(event) {
 
   alert(`Welcome back, ${name}!`);
   // Redirect or perform further actions for logged-in users
-  window.location.href = 'dashboard.html'; // Replace with the actual dashboard URL
+  window.location.href = 'webpad.html'; // Replace with the actual dashboard URL
 }
 
 // Helper function to validate email
