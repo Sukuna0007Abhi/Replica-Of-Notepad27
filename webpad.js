@@ -33,7 +33,7 @@ function navigateToSavedDocs() {
 
 // Logout
 function logout() {
-    window.location.href = "index.html";
+    window.location.href = "LogNSign.html";
 }
 
 // Save Document with Auto-Save
