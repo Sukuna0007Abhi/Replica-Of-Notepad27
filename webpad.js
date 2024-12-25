@@ -4,17 +4,52 @@ const editorContainer = document.getElementById("editor-container");
 const progressMessage = document.getElementById("progress-message");
 const findModal = document.getElementById("find-replace-modal");
 
+const userKey = "currentUser"; // Key for current user in localStorage
+const docsKey = "userDocuments"; // Key for storing all documents in localStorage
 let saveTimeout;
 
+// Load Current Document on Page Load
 window.onload = () => {
-  const currentDoc = localStorage.getItem("currentDoc");
+    const currentUser = JSON.parse(localStorage.getItem(userKey));
 
-  if (currentDoc) {
-      editor.innerHTML = localStorage.getItem(currentDoc);
-      toolbar.classList.remove("hidden");
-      editorContainer.classList.remove("hidden");
-      document.getElementById("options-overlay").classList.add("hidden");
-  }
+    if (!currentUser) {
+        alert("Please log in to access the WebPad.");
+        window.location.href = "index.html"; // Redirect to login page
+        return;
+    }
+
+    const currentDoc = JSON.parse(localStorage.getItem("currentDoc"));
+    if (currentDoc) {
+        const allDocs = JSON.parse(localStorage.getItem(docsKey)) || {};
+        const userDocs = allDocs[currentUser.email] || [];
+        const doc = userDocs.find(doc => doc.title === currentDoc.title);
+
+        if (doc) {
+            editor.innerHTML = doc.content;
+        }
+    }
+
+    toolbar.classList.remove("hidden");
+    editorContainer.classList.remove("hidden");
+    document.getElementById("options-overlay").classList.add("hidden");
+};
+
+//Overlay
+function toggleOverlay(show) {
+    const overlay = document.getElementById("options-overlay");
+    if (show) {
+        overlay.classList.remove("hidden");
+    } else {
+        overlay.classList.add("hidden");
+    }
+}
+
+// Example: Show overlay on page load if needed
+window.onload = () => {
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    if (!currentUser) {
+        toggleOverlay(true);
+    }
 };
 
 
@@ -24,6 +59,7 @@ function newDocument() {
     toolbar.classList.remove("hidden");
     editorContainer.classList.remove("hidden");
     editor.innerHTML = "";
+    localStorage.removeItem("currentDoc");
 }
 
 // Navigate to Saved Docs Page
@@ -33,29 +69,101 @@ function navigateToSavedDocs() {
 
 // Logout
 function logout() {
-    window.location.href = "LogNSign.html";
+    localStorage.removeItem(userKey);
+    localStorage.removeItem("currentDoc");
+    window.location.href = "index.html";
 }
 
-// Save Document with Auto-Save
+// Save Document
 function saveDocument() {
-    const docName = "Untitled"; // Update to include a proper naming mechanism
-    localStorage.setItem(docName, editor.innerHTML);
+    const currentUser = JSON.parse(localStorage.getItem(userKey));
+
+    if (!currentUser) {
+        alert("You must be logged in to save documents.");
+        return;
+    }
+
+    let currentDoc = JSON.parse(localStorage.getItem("currentDoc"));
+    let docName;
+
+    if (currentDoc && currentDoc.title) {
+        docName = currentDoc.title;
+    } else {
+        docName = prompt("Enter document name:");
+    }
+
+    if (!docName) {
+        alert("Document name is required to save.");
+        return;
+    }
+
+    const allDocs = JSON.parse(localStorage.getItem(docsKey)) || {};
+    const userDocs = allDocs[currentUser.email] || [];
+    const existingDocIndex = userDocs.findIndex(doc => doc.title === docName);
+
+    if (existingDocIndex !== -1) {
+        userDocs[existingDocIndex].content = editor.innerHTML;
+    } else {
+        userDocs.push({ title: docName, content: editor.innerHTML });
+    }
+
+    allDocs[currentUser.email] = userDocs;
+    localStorage.setItem(docsKey, JSON.stringify(allDocs));
+    localStorage.setItem("currentDoc", JSON.stringify({ title: docName }));
+
     showProgressMessage();
 }
 
 // Show Progress Message
-function showProgressMessage() {
+function showProgressMessage(message = "Saving...") {
+    if (!progressMessage) {
+        console.error("Progress message element not found in DOM.");
+        return;
+    }
+
+    progressMessage.innerText = message;
     progressMessage.style.display = "block";
+
     setTimeout(() => {
         progressMessage.style.display = "none";
-    }, 1000);
+    }, 1500); // Show message for 1.5 seconds
+}
+
+//Auto-Save (Temporary Draft)
+function autoSave() {
+    const currentUser = JSON.parse(localStorage.getItem(userKey));
+    const currentDoc = JSON.parse(localStorage.getItem("currentDoc"));
+
+    if (!currentUser || !currentDoc) {
+        console.warn("Auto-save skipped: No user or document found.");
+        return; // Skip auto-save if user or document is missing
+    }
+
+    const allDocs = JSON.parse(localStorage.getItem(docsKey)) || {};
+    const userDocs = allDocs[currentUser.email] || [];
+    const existingDocIndex = userDocs.findIndex(doc => doc.title === currentDoc.title);
+
+    if (existingDocIndex !== -1) {
+        // Update the temporary draft for the current doc
+        userDocs[existingDocIndex].content = editor.innerHTML;
+        allDocs[currentUser.email] = userDocs;
+        localStorage.setItem(docsKey, JSON.stringify(allDocs));
+    } else {
+        console.warn("Auto-save skipped: Document not found in user's saved documents.");
+    }
 }
 
 // Auto-Save on Input
 editor.addEventListener("input", () => {
     clearTimeout(saveTimeout);
-    saveTimeout = setTimeout(saveDocument, 2000);
+
+    // Wait 2 seconds after the user stops typing
+    saveTimeout = setTimeout(() => {
+        autoSave(); // Trigger auto-save
+        showProgressMessage("Progress saved."); // Show the progress message
+    }, 2000); // Delay before saving (2 seconds)
 });
+
 
 // Formatting Commands
 function execCommand(command) {
@@ -75,7 +183,7 @@ function changeFontColor(color) {
 }
 
 function insertList(type) {
-    document.execCommand(type === "ul" ? "insertUnorderedList" : "insertOrderedList", false, null);
+    document.execCommand(type === "ul" ? "insertUnorderedList" : "insertOrderedList", false, null);     // Check the type and call the appropriate command
 }
 
 // Insert Table
@@ -95,39 +203,34 @@ function insertTable() {
 
 // Undo and Redo
 function undo() {
-    document.execCommand("undo");
+    document.execCommand("undo");         // Check the type and call the appropriate command(undo)
 }
 
 function redo() {
-    document.execCommand("redo");
+    document.execCommand("redo");         // Check the type and call the appropriate command(redo)
 }
 
 // Find and Replace
 function showFindReplace() {
-    findModal.classList.remove("hidden");
+    findModal.classList.remove("hidden");      // Show the find and replace modal
 }
 
 function closeFindReplace() {
-    findModal.classList.add("hidden");
+    findModal.classList.add("hidden");         // Hide the find and replace modal
 }
 
+// Find and Replace
 function findAndReplace() {
     const findText = document.getElementById("find-input").value;
     const replaceText = document.getElementById("replace-input").value;
     const content = editor.innerHTML;
-    const regex = new RegExp(findText, "g");
+    const regex = new RegExp(findText, "g");            // Create a regular expression with the find text
     editor.innerHTML = content.replace(regex, replaceText);
     closeFindReplace();
 }
 
-function saveDocument() {
-  const docName = localStorage.getItem("currentDoc") || prompt("Enter document name:");
-
-  if (docName) {
-      localStorage.setItem(docName, editor.innerHTML);
-      localStorage.setItem("currentDoc", docName); // Save the current doc name for future edits
-      showProgressMessage();
-  } else {
-      alert("Document name is required to save.");
-  }
+function logout() {
+  localStorage.removeItem("currentUser"); // Clear user session
+  localStorage.removeItem("currentDoc"); // Clear current document
+  window.location.href = "LogNSign.html"; // Redirect to login/signup page
 }
